@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Morphine Milligram Equivalents (MME) Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .calculator {
+            text-align: center;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        h1 {
+            margin-top: 0;
+        }
+        .input-label {
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .input-field {
+            font-size: 18px;
+            padding: 8px;
+            margin-bottom: 10px;
+            width: 200px;
+        }
+        .calculate-button {
+            font-size: 18px;
+            font-weight: bold;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .calculate-button:hover {
+            background-color: #0056b3;
+        }
+        .result-box {
+            background-color: lightblue;
+            padding: 20px;
+            font-size: 24px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .result-label {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        .result-value {
+            font-weight: bold;
+        }
+        .disclaimer {
+            font-size: 14px;
+            margin-top: 20px;
+            text-align: center;
+        }
+        .add-opioid-button {
+            font-size: 18px;
+            font-weight: bold;
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+        }
+        .add-opioid-button:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <h1>Morphine Milligram Equivalents (MME) Calculator</h1>
+        <form id="med-form">
+            <div id="inputs-container">
+                <!-- Inputs will be dynamically added here -->
+            </div>
+            <button type="button" class="add-opioid-button" onclick="addOpioidInput()">Add Opioid</button><br><br>
+            <button type="button" class="calculate-button" onclick="calculateTotalMED()">Calculate Total MME</button>
+        </form>
+        <div id="result-container" class="result-box"></div>
+        <p class="disclaimer">This calculator provides approximate values. Always consult with a healthcare professional for accurate dosing information.</p>
+    </div>
+
+    <script>
+        var opioidOptions = [
+            { name: 'Morphine', conversionFactor: 1.0 },
+            { name: 'Oxycodone', conversionFactor: 1.5 },
+            { name: 'Hydrocodone', conversionFactor: 0.9 },
+            { name: 'Codeine', conversionFactor: 0.15 },
+            { name: 'Fentanyl', conversionFactor: 100 },
+            { name: 'OxyContin', conversionFactor: 1.5 },
+            { name: 'Tramadol', conversionFactor: 0.1 },
+            { name: 'Methadone', conversionFactor: 3.0 },
+            { name: 'Hydromorphone', conversionFactor: 4.0 },
+            { name: 'Tapentadol (Nucynta)', conversionFactor: 0.4 }
+            // Add more opioids as needed
+        ];
+
+        function addOpioidInput() {
+            var inputsContainer = document.getElementById('inputs-container');
+            var inputDiv = document.createElement('div');
+
+            var selectInput = document.createElement('select');
+            selectInput.classList.add('input-field');
+            selectInput.name = 'opioid-type';
+            opioidOptions.forEach(function (option) {
+                var optionElement = document.createElement('option');
+                optionElement.value = option.name;
+                optionElement.textContent = option.name;
+                selectInput.appendChild(optionElement);
+            });
+
+            var doseInput = document.createElement('input');
+            doseInput.classList.add('input-field');
+            doseInput.type = 'text';
+            doseInput.name = 'opioid-dose';
+            doseInput.placeholder = 'Dose (mg)';
+
+            var quantityInput = document.createElement('input');
+            quantityInput.classList.add('input-field');
+            quantityInput.type = 'text';
+            quantityInput.name = 'opioid-quantity';
+            quantityInput.placeholder = 'Quantity per Day';
+
+            inputDiv.appendChild(selectInput);
+            inputDiv.appendChild(doseInput);
+            inputDiv.appendChild(quantityInput);
+
+            inputsContainer.appendChild(inputDiv);
+        }
+
+        function calculateTotalMED() {
+            var inputs = document.querySelectorAll('#inputs-container > div');
+            var totalMME = 0;
+
+            inputs.forEach(function (inputDiv) {
+                var opioidType = inputDiv.querySelector('select').value;
+                var opioidDose = parseFloat(inputDiv.querySelector('input[name="opioid-dose"]').value) || 0;
+                var opioidQuantity = parseFloat(inputDiv.querySelector('input[name="opioid-quantity"]').value) || 0;
+
+                var selectedOpioid = opioidOptions.find(function (option) {
+                    return option.name === opioidType;
+                });
+
+                if (selectedOpioid) {
+                    totalMME += opioidDose * opioidQuantity * selectedOpioid.conversionFactor;
+                }
+            });
+
+            var resultContainer = document.getElementById('result-container');
+            resultContainer.innerHTML = `
+                <div class="result-box">
+                    <span class="result-label">Total Morphine Equivalent Dose:</span>
+                    <span class="result-value">${totalMME.toFixed(2)} mg</span>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>
